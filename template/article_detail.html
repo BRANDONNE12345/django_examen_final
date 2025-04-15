@@ -1,0 +1,860 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.titre }} - Furni Blog</title>
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+      /* Variables pour les couleurs */
+      :root {
+        --primary-color: #3b5d50;
+        --primary-dark: #2f4b40;
+        --secondary-color: #f9bf29;
+        --text-color: #2f2f2f;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #6c757d;
+      }
+
+      /* Style général */
+      body {
+        font-family: 'Roboto', sans-serif;
+        color: var(--text-color);
+        line-height: 1.7;
+      }
+
+      /* Styles du header */
+      .custom-navbar {
+        background-color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 15px 0;
+      }
+      
+      .custom-navbar .navbar-brand {
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: white;
+        letter-spacing: -0.5px;
+      }
+      
+      .custom-navbar .navbar-brand span {
+        color: var(--secondary-color);
+      }
+      
+      .custom-navbar .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+      
+      .custom-navbar .nav-link:hover {
+        color: var(--secondary-color) !important;
+      }
+
+      /* Styles de l'article */
+      .article-detail-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        padding: 6rem 0 4rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .article-detail-header::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        right: -50px;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      
+      .article-detail-header h1 {
+        font-size: 3.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+      
+      .article-meta {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .article-meta .meta-item {
+        margin: 0 10px;
+        display: inline-flex;
+        align-items: center;
+      }
+      
+      .article-meta i {
+        margin-right: 5px;
+        color: var(--secondary-color);
+      }
+      
+      .article-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+        padding: .5rem;
+      }
+      
+      .article-content-wrapper {
+        padding: 2.5rem;
+      }
+      
+      .article-cover {
+        width: 100%;
+        height: auto;
+        border-radius: 10px 10px 0 0;
+        object-fit: cover;
+        max-height: 500px;
+      }
+      
+      .article-content {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: var(--text-color);
+        margin-top: 2rem;
+      }
+      
+      .article-content p {
+        margin-bottom: 1.5rem;
+      }
+      
+      .article-content h2, .article-content h3 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      /* Styles de la section commentaires */
+      .comment-section {
+        margin-top: 4rem;
+        border-top: 1px solid var(--medium-gray);
+        padding-top: 2rem;
+      }
+      
+      .comment-section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+      }
+      
+      .comment-section-title .badge {
+        background-color: var(--primary-color);
+        color: white;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 50px;
+        margin-left: 1rem;
+      }
+      
+      .comment {
+        background-color: var(--light-gray);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
+      
+      .comment .author {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+      }
+      
+      .comment .author i {
+        margin-right: 8px;
+        color: var(--primary-color);
+      }
+      
+      .comment .content {
+        margin-bottom: 0.5rem;
+      }
+      
+      .comment .date {
+        font-size: 0.85rem;
+        color: var(--dark-gray);
+      }
+
+      /* Style du formulaire de commentaire */
+      .comment-form {
+        background-color: var(--light-gray);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-top: 2.5rem;
+      }
+      
+      .comment-form h5 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+      
+      .comment-form textarea {
+        resize: none;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 1rem;
+        background-color: white;
+      }
+      
+      .comment-form .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+      }
+      
+      .comment-form .btn-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .login-prompt {
+        background-color: var(--light-gray);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-top: 2.5rem;
+      }
+      
+      .login-prompt a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+      }
+      
+      .login-prompt a:hover {
+        text-decoration: underline;
+      }
+
+      /* Styles partage d'article */
+      .share-article {
+        margin-top: 3rem;
+        text-align: center;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--medium-gray);
+        border-bottom: 1px solid var(--medium-gray);
+      }
+      
+      .share-article h5 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--dark-gray);
+      }
+      
+      .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+      }
+      
+      .share-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dark-gray);
+        transition: all 0.3s ease;
+      }
+      
+      .share-button:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+      }
+
+      /* Navigation entre articles */
+      .article-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 3rem;
+        margin-bottom: 2rem;
+      }
+      
+      .nav-article {
+        max-width: 48%;
+        padding: 1rem;
+        border-radius: 8px;
+        background-color: var(--light-gray);
+        transition: all 0.3s ease;
+      }
+      
+      .nav-article:hover {
+        background-color: var(--medium-gray);
+      }
+      
+      .nav-article span {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--dark-gray);
+        margin-bottom: 0.3rem;
+      }
+      
+      .nav-article h6 {
+        font-size: 1rem;
+        margin: 0;
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+      
+      .nav-article.prev {
+        text-align: left;
+      }
+      
+      .nav-article.next {
+        text-align: right;
+      }
+
+      /* Footer redesigné */
+      .footer-section {
+        background-color: var(--light-gray);
+        padding: 5rem 0 2rem;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .footer-section .sofa-img {
+        position: absolute;
+        top: -80px;
+        right: 0;
+        opacity: 0.06;
+        max-width: 350px;
+      }
+      
+      .subscription-form {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+      }
+      
+      .subscription-form h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+      
+      .subscription-form .form-control {
+        height: 50px;
+        border-radius: 50px;
+        padding-left: 20px;
+        border: 1px solid #ddd;
+      }
+      
+      .subscription-form .btn-primary {
+        height: 50px;
+        border-radius: 50px;
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        width: 50px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .footer-logo {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      
+      .footer-logo span {
+        color: var(--secondary-color);
+      }
+      
+      .custom-social {
+        display: flex;
+        gap: 15px;
+        margin-top: 1.5rem;
+        padding-left: 0;
+      }
+      
+      .custom-social li a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: white;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+      
+      .custom-social li a:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+      }
+      
+      .links-wrap h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+      
+      .links-wrap ul {
+        list-style: none;
+        padding: 0;
+      }
+      
+      .links-wrap ul li {
+        margin-bottom: 0.8rem;
+      }
+      
+      .links-wrap ul li a {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      
+      .links-wrap ul li a:hover {
+        color: var(--primary-color);
+        padding-left: 5px;
+      }
+      
+      .copyright {
+        border-top: 1px solid #ddd;
+        padding-top: 2rem;
+        margin-top: 3rem;
+        font-size: 0.9rem;
+        color: var(--dark-gray);
+      }
+      
+      .copyright a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      
+      .copyright a:hover {
+        text-decoration: underline;
+      }
+      
+      /* Responsive design */
+      @media (max-width: 991px) {
+        .article-detail-header h1 {
+          font-size: 2.5rem;
+        }
+        
+        .article-container {
+          margin-top: -30px;
+        }
+      }
+      
+      @media (max-width: 767px) {
+        .article-detail-header {
+          padding: 4rem 0 3rem;
+        }
+        
+        .article-detail-header h1 {
+          font-size: 2rem;
+        }
+        
+        .article-meta {
+          flex-direction: column;
+          gap: 5px;
+        }
+        
+        .article-container {
+          margin-top: -20px;
+          border-radius: 10px;
+        }
+        
+        .article-content-wrapper {
+          padding: 1.5rem;
+        }
+        
+        .comment .author {
+          font-size: 1rem;
+        }
+        
+        .article-navigation {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        
+        .nav-article {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Header -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+        <div class="container">
+          <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+      
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'shop' %}">Boutique</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}">À propos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'services' %}">Services</a>
+              </li>
+           
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+              </li>
+              
+            </ul>
+      
+            <ul class="custom-navbar-cta navbar-nav ms-5 mb-2 mb-md-0">
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <!-- Affichage sous forme de nav-link pour rester au même niveau -->
+                <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+              </li>
+              {% endif %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img src="{% static 'images/user.svg' %}" alt="Utilisateur">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="{% url 'utilisateur:profile' %}">Profil</a></li>
+                  <li><a class="dropdown-item" href="{% url 'ecommerce:order_history' %}">Mes commandes</a></li>
+                  <li><a class="dropdown-item" href="{% url 'blog:my_article' %}">Mes articles</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'utilisateur:logout' %}">Déconnexion</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+               
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <!-- Fin Header -->
+
+    <!-- Section Article Detail Header -->
+    <section class="article-detail-header text-center">
+      <div class="container">
+        <h1>{{ article.titre }}</h1>
+        <div class="article-meta">
+          <div class="meta-item">
+            <i class="far fa-calendar-alt"></i>
+            {{ article.date_de_publication|date:"d M Y" }}
+          </div>
+          <div class="meta-item">
+            <i class="far fa-user"></i>
+            {% if article.auteur %}
+              {{ article.auteur.first_name|default:article.auteur.username }}
+            {% else %}
+              Anonyme
+            {% endif %}
+          </div>
+          <div class="meta-item">
+            <i class="far fa-folder"></i>
+            {{ article.categorie.nom }}
+          </div>
+          {% if article.temps_lecture %}
+          <div class="meta-item">
+            <i class="far fa-clock"></i>
+            {{ article.temps_lecture }} min de lecture
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Contenu de l'article -->
+    <div class="container py-5">
+      <div class="article-container">
+        {% if article.couverture %}
+          <img src="{{ article.couverture.url }}" alt="{{ article.titre }}" class="article-cover">
+        {% endif %}
+        
+        <div class="article-content-wrapper">
+          <div class="article-content">
+            {{ article.contenu|safe }}
+          </div>
+
+          <!-- Section Partage -->
+          <div class="share-article">
+            <h5>Partagez cet article</h5>
+            <div class="share-buttons">
+              <a href="#" class="share-button"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="share-button"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="share-button"><i class="fab fa-linkedin-in"></i></a>
+              <a href="#" class="share-button"><i class="fab fa-pinterest-p"></i></a>
+              <a href="#" class="share-button"><i class="far fa-envelope"></i></a>
+            </div>
+          </div>
+
+          <!-- Navigation entre articles -->
+          <div class="article-navigation">
+            {% if article_precedent %}
+            <a href="{% url 'blog:detail' article_precedent.slug %}" class="nav-article prev">
+              <span><i class="fas fa-chevron-left"></i> Article précédent</span>
+              <h6>{{ article_precedent.titre }}</h6>
+            </a>
+            {% else %}
+            <div></div>
+            {% endif %}
+
+            {% if article_suivant %}
+            <a href="{% url 'blog:detail' article_suivant.slug %}" class="nav-article next">
+              <span>Article suivant <i class="fas fa-chevron-right"></i></span>
+              <h6>{{ article_suivant.titre }}</h6>
+            </a>
+            {% else %}
+            <div></div>
+            {% endif %}
+          </div>
+
+          <!-- Section Commentaires -->
+          <div class="comment-section">
+            <h3 class="comment-section-title">
+              Commentaires <span class="badge">{{ commentaires|length }}</span>
+            </h3>
+            
+            {% for commentaire in commentaires %}
+              <div class="comment">
+                <div class="author">
+                  <i class="fas fa-user-circle"></i>
+                  {% if commentaire.auteur %}
+                    {{ commentaire.auteur.first_name|default:commentaire.auteur.username }}
+                  {% else %}
+                    Anonyme
+                  {% endif %}
+                </div>
+                <div class="content">{{ commentaire.contenu }}</div>
+                <div class="date">
+                  <i class="far fa-clock"></i> {{ commentaire.created_at|date:"d M Y à H:i" }}
+                </div>
+              </div>
+            {% empty %}
+              <div class="alert alert-light">
+                <i class="far fa-comment-dots"></i> Aucun commentaire pour le moment. Soyez le premier à partager votre avis !
+              </div>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+              <div class="comment-form">
+                <h5><i class="far fa-edit"></i> Laisser un commentaire</h5>
+                <form method="post" action="{% url 'blog:add_comment' article.slug %}">
+                  {% csrf_token %}
+                  
+                  {% for field in commentaire_form %}
+                    <div class="mb-3">
+                      {% if field.errors %}
+                        <div class="alert alert-danger">
+                          {{ field.errors }}
+                        </div>
+                      {% endif %}
+                      
+                      {% if field.label %}
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                      {% endif %}
+                      
+                      {{ field }}
+                      
+                      {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                  
+                  <button type="submit" class="btn btn-primary">
+                    <i class="far fa-paper-plane"></i> Publier mon commentaire
+                  </button>
+                </form>
+              </div>
+            {% else %}
+              <div class="login-prompt">
+                <i class="fas fa-lock"></i>
+                <p>Vous devez être connecté pour laisser un commentaire.</p>
+                <a href="{% url 'utilisateur:login' %}" class="btn btn-outline-primary">
+                  <i class="fas fa-sign-in-alt"></i> Se connecter
+                </a>
+              </div>
+            {% endif %}
+          </div>
+          <!-- Fin Section Commentaires -->
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer-section">
+        <div class="container relative">
+          <!-- Image décorative (facultative) -->
+          <div class="sofa-img">
+            <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+          </div>
+          <!-- Section d'inscription à la newsletter -->
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="subscription-form">
+                <h3 class="d-flex align-items-center">
+                  <span class="me-1">
+                    <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                  </span>
+                  <span>Abonnez-vous à la Newsletter</span>
+                </h3>
+                <!-- Formulaire d'inscription à la newsletter -->
+                <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                  {% csrf_token %}
+                  <div class="col-auto">
+                    <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                  </div>
+                  <div class="col-auto">
+                    <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">
+                      <span class="fa fa-paper-plane"></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- Fin de la section newsletter, contenu complémentaire (liens, logo, etc.) -->
+          <div class="row g-5 mb-5">
+            <div class="col-lg-4">
+              <div class="mb-4 footer-logo-wrap">
+                <a href="#" class="footer-logo">Furni<span>.</span></a>
+              </div>
+              <p class="mb-4">Notre mission est de créer des espaces uniques et inspirants pour tous, alliant esthétisme et fonctionnalité.</p>
+              <ul class="list-unstyled custom-social">
+                <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-8">
+              <div class="row links-wrap">
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                    <li><a href="{% url 'about' %}">À propos</a></li>
+                    <li><a href="{% url 'services' %}">Services</a></li>
+                 
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                   
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Section Copyright -->
+          <div class="border-top copyright">
+            <div class="row pt-4">
+              <div class="col-lg-6">
+                <p class="mb-2 text-center text-lg-start">
+                  Copyright &copy;
+                  <script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Conçu avec amour par 
+                  <a href="https://untree.co">Untree.co</a> et Distribué par 
+                  <a href="https://themewagon.com">ThemeWagon</a>
+                </p>
+              </div>
+              <div class="col-lg-6 text-center text-lg-end">
+                <ul class="list-unstyled d-inline-flex ms-auto">
+                  <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                  <li><a href="#">Politique de confidentialité</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- End Footer Section -->
+      
+      <!-- End Footer Section -->
+      
+        
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const commentForm = document.querySelector(".comment-form form");
+          if(commentForm){
+            commentForm.addEventListener("submit", function(e) {
+              e.preventDefault();
+              const formData = new FormData(commentForm);
+              fetch(commentForm.action, {
+                method: commentForm.method,
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+              })
+              .then(response => {
+                if(response.ok){
+                  // Recharge la page ou mettez à jour la section des commentaires en ajax
+                  location.reload();
+                }
+              })
+              .catch(error => console.error("Erreur lors de l'envoi du commentaire :", error));
+            });
+          }
+        });
+      </script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

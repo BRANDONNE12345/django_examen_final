@@ -1,0 +1,492 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <title>
+      {% if form.instance.pk %}
+        Modifier l'Article - Furni Blog
+      {% else %}
+        Créer un Nouvel Article - Furni Blog
+      {% endif %}
+    </title>
+    <style>
+      :root {
+        --primary-color: #3b5d50;
+        --primary-dark: #2f4b40;
+        --secondary-color: #f9bf29;
+        --background-light: #fafafa;
+        --text-color: #2f2f2f;
+      }
+      /* Base Styles */
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-light);
+        color: var(--text-color);
+      }
+      /* Header Styles */
+      nav.custom-navbar {
+        background-color: #343a40;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      nav.custom-navbar .navbar-brand {
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: #fff;
+        letter-spacing: -0.5px;
+      }
+      nav.custom-navbar .nav-link {
+        color: #fff !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: color 0.3s;
+      }
+      nav.custom-navbar .nav-link:hover {
+        color: var(--secondary-color) !important;
+      }
+      /* Main Content Container */
+      .container.content {
+        margin-top: 3rem;
+      }
+      
+      /* Form Container - DESIGN AMÉLIORÉ */
+      .form-container {
+        background-color: #fff;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+        border-left: 5px solid var(--primary-color);
+      }
+
+      .form-container h1 {
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 2.2rem;
+        position: relative;
+        padding-bottom: 10px;
+      }
+
+      .form-container h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: var(--secondary-color);
+      }
+
+      .form-container .lead {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Style des champs du formulaire */
+      .form-control, 
+      textarea, 
+      select, 
+      .django-ckeditor-widget {
+        border: 1px solid #e5e5e5;
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: none;
+        background-color: #f9f9f9;
+        width: 100%;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-control:focus, 
+      textarea:focus, 
+      select:focus, 
+      .django-ckeditor-widget:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(59, 93, 80, 0.15);
+        background-color: #fff;
+      }
+
+      /* Style pour les labels */
+      .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        display: block;
+      }
+
+      /* Style pour le bouton */
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 12px 25px;
+        font-weight: 600;
+        border-radius: 8px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(59, 93, 80, 0.3);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(59, 93, 80, 0.4);
+      }
+
+      /* Messages flash */
+      .alert {
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 1.5rem;
+        border: none;
+      }
+
+      .alert-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border-left: 4px solid #0f5132;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+        border-left: 4px solid #842029;
+      }
+
+      /* Style pour la sélection de fichier */
+      input[type="file"] {
+        padding: 10px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      /* Style pour les tags */
+      select[multiple] {
+        height: auto;
+        min-height: 100px;
+      }
+      
+      /* Masquer les champs liés au statut (optionnel) */
+      .field-est_publie, .field-statut { 
+        display: none; 
+      }
+      
+      /* Footer Styles */
+      .footer-section {
+        background: #eff2f1;
+        padding-top: 5rem;
+        border-top: 1px solid #e5e5e5;
+        position: relative;
+        overflow: hidden;
+      }
+      .footer-section .sofa-img {
+        position: absolute;
+        top: -80px;
+        right: 0;
+        opacity: 0.06;
+        max-width: 350px;
+      }
+      .subscription-form {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-bottom: 3rem;
+      }
+      .subscription-form h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+      .subscription-form .form-control {
+        height: 50px;
+        border-radius: 50px;
+        padding-left: 20px;
+        border: 1px solid #ddd;
+      }
+      .subscription-form .btn-primary {
+        height: 50px;
+        border-radius: 50px;
+        background: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        width: 50px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .footer-logo {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      .footer-logo span {
+        color: var(--secondary-color);
+      }
+      .custom-social {
+        display: flex;
+        gap: 15px;
+        margin-top: 1.5rem;
+      }
+      .custom-social li a {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      }
+      .custom-social li a:hover {
+        background: var(--primary-color);
+        color: #fff;
+        transform: translateY(-3px);
+      }
+      .links-wrap ul {
+        list-style: none;
+        padding: 0;
+      }
+      .links-wrap ul li {
+        margin-bottom: 0.8rem;
+      }
+      .links-wrap ul li a {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      .links-wrap ul li a:hover {
+        color: var(--primary-color);
+        padding-left: 5px;
+      }
+      .copyright {
+        border-top: 1px solid #ddd;
+        padding-top: 2rem;
+        margin-top: 3rem;
+        font-size: 0.9rem;
+        color: #777;
+      }
+      .copyright a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      .copyright a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header/Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+          <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Accueil</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Boutique</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">À propos</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">Services</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'chatBot' %}">Assistance</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'blog:blog' %}">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+          </ul>
+          <ul class="navbar-nav ms-5 mb-2 mb-md-0">
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+              </li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'ecommerce:cart' %}"><i class="fas fa-shopping-cart"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Fin Header/Navigation -->
+
+    <!-- Main Content: Article Form -->
+    <div class="container content">
+      <div class="form-container">
+        <h1>
+          {% if form.instance.pk %}
+            Modifier l'Article
+          {% else %}
+            Créer un Nouvel Article
+          {% endif %}
+        </h1>
+        <p class="lead">
+          {% if form.instance.pk %}
+            Modifiez les informations de votre article.
+          {% else %}
+            Remplissez le formulaire ci-dessous pour créer un nouvel article.<br>
+            Votre article sera enregistré en <strong>brouillon</strong> et ne sera publié qu'après validation par un administrateur.
+          {% endif %}
+        </p>
+
+        <!-- Affichage des messages flash -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_titre" class="form-label">Titre</label>
+            {{ form.titre }}
+          </div>
+          
+          <div class="mb-3">
+            <label for="id_couverture" class="form-label">Image de couverture (facultatif)</label>
+            {{ form.couverture }}
+          </div>
+          
+          <div class="mb-3">
+            <label for="id_resume" class="form-label">Résumé</label>
+            {{ form.resume }}
+          </div>
+          
+          <div class="mb-3">
+            <label for="id_contenu" class="form-label">Contenu</label>
+            {{ form.contenu }}
+          </div>
+          
+          <div class="mb-3">
+            <label for="id_categorie" class="form-label">Catégorie</label>
+            {{ form.categorie }}
+          </div>
+          
+          <div class="mb-3">
+            <label for="id_tags" class="form-label">Tags</label>
+            {{ form.tags }}
+          </div>
+          
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i>Enregistrer
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer-section">
+        <div class="container relative">
+          <!-- Image décorative (facultative) -->
+          <div class="sofa-img">
+            <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+          </div>
+          <!-- Section d'inscription à la newsletter -->
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="subscription-form">
+                <h3 class="d-flex align-items-center">
+                  <span class="me-1">
+                    <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                  </span>
+                  <span>Abonnez-vous à la Newsletter</span>
+                </h3>
+                <!-- Formulaire d'inscription à la newsletter -->
+                <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                  {% csrf_token %}
+                  <div class="col-auto">
+                    <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                  </div>
+                  <div class="col-auto">
+                    <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">
+                      <span class="fa fa-paper-plane"></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- Fin de la section newsletter, contenu complémentaire (liens, logo, etc.) -->
+          <div class="row g-5 mb-5">
+            <div class="col-lg-4">
+              <div class="mb-4 footer-logo-wrap">
+                <a href="#" class="footer-logo">Furni<span>.</span></a>
+              </div>
+              <p class="mb-4">Notre mission est de créer des espaces uniques et inspirants pour tous, alliant esthétisme et fonctionnalité.</p>
+              <ul class="list-unstyled custom-social">
+                <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-8">
+              <div class="row links-wrap">
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                    <li><a href="{% url 'about' %}">À propos</a></li>
+                    <li><a href="{% url 'services' %}">Services</a></li>
+                 
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                   
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Section Copyright -->
+          <div class="border-top copyright">
+            <div class="row pt-4">
+              <div class="col-lg-6">
+                <p class="mb-2 text-center text-lg-start">
+                  Copyright &copy;
+                  <script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Conçu avec amour par 
+                  <a href="https://untree.co">Untree.co</a> et Distribué par 
+                  <a href="https://themewagon.com">ThemeWagon</a>
+                </p>
+              </div>
+              <div class="col-lg-6 text-center text-lg-end">
+                <ul class="list-unstyled d-inline-flex ms-auto">
+                  <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                  <li><a href="#">Politique de confidentialité</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    <!-- Fin Footer Section -->
+    
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

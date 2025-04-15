@@ -1,0 +1,16 @@
+# Environnement virtuel
+env/
+venv/
+
+# Fichiers de cache Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Fichiers temporaires
+*.log
+*.pot
+*.pyc
+
+# Dossiers Django communs à ignorer
+db.sqlite3

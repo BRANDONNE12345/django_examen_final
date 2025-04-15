@@ -1,0 +1,380 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <title>Mes Articles - Furni Blog</title>
+    <style>
+      /* Palette et typographie */
+      :root {
+        --primary-color: #3b5d50;
+        --primary-dark: #2f4b40;
+        --secondary-color: #f9bf29;
+        --background-light: #fafafa;
+        --text-color: #2f2f2f;
+      }
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--background-light);
+        color: var(--text-color);
+      }
+      
+      /* Header */
+      nav.custom-navbar {
+        background-color: #343a40;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      nav.custom-navbar .navbar-brand {
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: #fff;
+        letter-spacing: -0.5px;
+      }
+      nav.custom-navbar .nav-link {
+        color: #ffffff !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: color 0.3s;
+      }
+      nav.custom-navbar .nav-link:hover {
+        color: var(--secondary-color) !important;
+      }
+      
+      /* Contenu principal */
+      .container.content {
+        margin-top: 3rem;
+      }
+      h1.page-title {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+      }
+      p.lead {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+      }
+      /* Tableau des articles */
+      table.table {
+        background-color: #fff;
+      }
+      table.table th,
+      table.table td {
+        vertical-align: middle;
+      }
+      .table-actions a {
+        margin-right: 5px;
+      }
+      .badge.bg-secondary {
+        background-color: #6c757d;
+      }
+      
+      /* Footer */
+      .footer-section {
+        background: #eff2f1;
+        padding-top: 5rem;
+        border-top: 1px solid #e5e5e5;
+        position: relative;
+        overflow: hidden;
+      }
+      .footer-section .sofa-img {
+        position: absolute;
+        top: -80px;
+        right: 0;
+        opacity: 0.06;
+        max-width: 350px;
+      }
+      .subscription-form {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 3rem;
+      }
+      .subscription-form h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+      }
+      .subscription-form .form-control {
+        height: 50px;
+        border-radius: 50px;
+        padding-left: 20px;
+        border: 1px solid #ddd;
+      }
+      .subscription-form .btn-primary {
+        height: 50px;
+        border-radius: 50px;
+        background: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        width: 50px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .footer-logo {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      .footer-logo span {
+        color: var(--secondary-color);
+      }
+      .custom-social {
+        display: flex;
+        gap: 15px;
+        margin-top: 1.5rem;
+      }
+      .custom-social li a {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      }
+      .custom-social li a:hover {
+        background: var(--primary-color);
+        color: #fff;
+        transform: translateY(-3px);
+      }
+      .links-wrap ul {
+        list-style: none;
+        padding: 0;
+      }
+      .links-wrap ul li {
+        margin-bottom: 0.8rem;
+      }
+      .links-wrap ul li a {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      .links-wrap ul li a:hover {
+        color: var(--primary-color);
+        padding-left: 5px;
+      }
+      .copyright {
+        border-top: 1px solid #ddd;
+        padding-top: 2rem;
+        margin-top: 3rem;
+        font-size: 0.9rem;
+        color: #777;
+      }
+      .copyright a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+      .copyright a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header/Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+          <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Accueil</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Boutique</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">À propos</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">Services</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'chatBot' %}">Assistance</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'blog:blog' %}">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+          </ul>
+          <ul class="navbar-nav ms-5 mb-2 mb-md-0">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+            </li>
+            {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'ecommerce:cart' %}"><i class="fas fa-shopping-cart"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Fin Header/Navigation -->
+
+    <!-- Contenu de la page : Liste des articles -->
+    <div class="container content">
+      <h1 class="page-title">Mes Articles</h1>
+      <p>
+        Gérer vos articles : créez, modifiez ou supprimez vos articles.<br>
+        Les articles sont enregistrés en statut <strong>brouillon</strong> et seront publiés uniquement après validation par un administrateur.
+      </p>
+      <a class="btn btn-primary mb-3" href="{% url 'blog:article_create' %}">Créer un nouvel article</a>
+      
+      {% if articles %}
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Titre</th>
+              <th>Date de création</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for article in articles %}
+            <tr>
+              <td>
+                {% if article.slug %}
+                  <a href="{% url 'blog:article_detail' article.slug %}">
+                    {{ article.titre }}
+                  </a>
+                {% else %}
+                  {{ article.titre }} <small class="text-muted">(slug manquant)</small>
+                {% endif %}
+              </td>
+              
+              <td>{{ article.created_at|date:"d M Y" }}</td>
+              <td>
+                {% if article.est_publie %}
+                  <span class="badge bg-success">Publié</span>
+                {% else %}
+                  <span class="badge bg-secondary">Brouillon</span>
+                {% endif %}
+              </td>
+              <td class="table-actions">
+                {% if article.slug %}
+                <a class="btn btn-sm btn-warning" href="{% url 'blog:article_update' article.slug %}">Modifier</a>
+                <a class="btn btn-sm btn-danger" href="{% url 'blog:article_delete' article.slug %}">Supprimer</a>
+                {% if not article.est_publie %}
+                  <small class="text-muted">En attente de validation</small>
+                {% endif %}
+              {% else %}
+                <span class="text-danger small">Lien invalide (slug manquant)</span>
+              {% endif %}
+              
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>Vous n'avez encore aucun article.</p>
+      {% endif %}
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer-section">
+      <div class="container relative">
+        <div class="sofa-img">
+          <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+        </div>
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form">
+              <h3 class="d-flex align-items-center">
+                <span class="me-1">
+                  <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                </span>
+                <span>Abonnez-vous à la Newsletter</span>
+              </h3>
+              <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-auto">
+                  <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                </div>
+                <div class="col-auto">
+                  <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary">
+                    <span class="fa fa-paper-plane"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="row g-5 mb-5">
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap">
+              <a href="#" class="footer-logo">Furni<span>.</span></a>
+            </div>
+            <p class="mb-4">Notre mission est de créer des espaces uniques et inspirants pour tous, alliant esthétisme et fonctionnalité.</p>
+            <ul class="list-unstyled custom-social">
+              <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+            </ul>
+          </div>
+          <div class="col-lg-8">
+            <div class="row links-wrap">
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">À propos</a></li>
+                  <li><a href="#">Services</a></li>
+                  <li><a href="#">Blog</a></li>
+                  <li><a href="#">Contact us</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Support</a></li>
+                  <li><a href="#">FAQ</a></li>
+                  <li><a href="#">Chat en direct</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Emplois</a></li>
+                  <li><a href="#">Équipe</a></li>
+                  <li><a href="#">Leadership</a></li>
+                  <li><a href="#">Politique de confidentialité</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="#">Chaise Nordique</a></li>
+                  <li><a href="#">Chaise Kruzo Aero</a></li>
+                  <li><a href="#">Chaise Ergonomique</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">
+                Copyright &copy;
+                <script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Conçu avec amour par 
+                <a href="https://untree.co">Untree.co</a> et Distribué par 
+                <a href="https://themewagon.com">ThemeWagon</a>
+              </p>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Fin Footer Section -->
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,858 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+
+    <meta name="description" content="Furni - Collection de meubles africains artisanaux" />
+    <meta name="keywords" content="meubles africains, design d'intérieur, mobilier artisanal" />
+
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Tiny Slider CSS -->
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <!-- Styles personnalisés -->
+    <style>
+      /* Styles globaux et composants pour la fiche produit */
+      body {
+        font-family: 'Poppins', sans-serif;
+        color: #2f2f2f;
+      }
+      .hero {
+        background: linear-gradient(135deg, #3b5d50 0%, #2f4b40 100%);
+        padding: 6rem 0;
+      }
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .product-detail-section {
+        padding: 5rem 0;
+      }
+      .product-detail-image {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+      }
+      .product-detail-image img {
+        transition: transform 0.5s ease;
+      }
+      .product-detail-image:hover img {
+        transform: scale(1.02);
+      }
+      .thumbnail-gallery {
+        display: flex;
+        margin-top: 1.5rem;
+        gap: 10px;
+        justify-content: center;
+      }
+      .thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+      .thumbnail:hover, .thumbnail.active {
+        opacity: 1;
+        border-color: #3b5d50;
+      }
+      .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .product-details {
+        padding-left: 2rem;
+        text-align: center;
+      }
+      .product-details .title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #333;
+        text-align: center;
+      }
+      .product-badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 30px;
+        margin-right: 0.75rem;
+      }
+      .badge-new {
+        background-color: rgba(25, 135, 84, 0.15);
+        color: #198754;
+      }
+      .badge-promo {
+        background-color: rgba(220, 53, 69, 0.15);
+        color: #dc3545;
+      }
+      .price-display {
+        margin: 2rem 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .price-regular {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 1.2rem;
+      }
+      .price-promo {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #3b5d50;
+      }
+      .product-specs {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .spec-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        justify-content: center;
+      }
+      .spec-icon {
+        margin-right: 0.75rem;
+        color: #3b5d50;
+        font-size: 1.1rem;
+      }
+      .description {
+        margin-bottom: 2rem;
+        line-height: 1.8;
+        text-align: center;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 15px;
+      }
+      .description h3 {
+        text-align: center;
+        position: relative;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+      }
+      .description h3:after {
+        content: "";
+        position: absolute;
+        width: 60px;
+        height: 3px;
+        background-color: #3b5d50;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .availability {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: 30px;
+        font-weight: 500;
+        width: fit-content;
+        margin: 0 auto 2rem auto;
+      }
+      .availability.in-stock {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: #198754;
+      }
+      .availability.out-of-stock {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+      }
+      /* Sélecteur de quantité et bouton "Ajouter au panier" */
+      form.mb-5 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 auto;
+      }
+      .quantity-selector {
+        display: flex;
+        align-items: center;
+        max-width: 160px;
+        border-radius: 50px;
+        overflow: hidden;
+        border: 2px solid #dee2e6;
+        margin: 0 auto 1.5rem auto;
+      }
+      .quantity-btn {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .quantity-btn:hover {
+        background: #e9ecef;
+      }
+      .quantity-input {
+        width: 60px;
+        text-align: center;
+        border: none;
+        font-weight: 600;
+        background: transparent;
+      }
+      .add-to-cart-btn {
+        border-radius: 50px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background-color: #3b5d50;
+        border: none;
+        transition: all 0.3s ease;
+      }
+      .add-to-cart-btn:hover {
+        background-color: #2f4b40;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      /* Styles pour la section des avis */
+      .product-meta {
+        text-align: center;
+      }
+      
+      .reviews-section {
+        margin-top: 3rem;
+        border-top: 1px solid #dee2e6;
+        padding-top: 2rem;
+      }
+      
+      .reviews-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      
+      .reviews-header h3 {
+        font-weight: 600;
+        margin-bottom: 0;
+      }
+      
+      .reviews-count {
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-left: 15px;
+      }
+      
+      .review-card {
+        padding: 1.5rem;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+        margin-bottom: 1.25rem;
+        transition: all 0.3s ease;
+        border-left: 4px solid #3b5d50;
+        text-align: center;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .review-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      }
+      
+      .review-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .reviewer {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+      }
+      
+      .review-date {
+        color: #777;
+        font-size: 0.85rem;
+      }
+      
+      .star-rating {
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .star {
+        color: #ffc107;
+        margin-right: 0.2rem;
+      }
+      
+      .review-content {
+        line-height: 1.7;
+        color: #555;
+      }
+      
+      .review-form {
+        margin-top: 2.5rem;
+        padding: 2rem;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+      }
+      
+      .review-form h4 {
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #333;
+      }
+      
+      .rating-selector {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+      }
+      
+      .rating-selector input {
+        display: none;
+      }
+      
+      .rating-selector label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #d1d1d1;
+        padding: 0 0.2rem;
+        transition: all 0.2s ease;
+      }
+      
+      .rating-selector input:checked ~ label,
+      .rating-selector label:hover,
+      .rating-selector label:hover ~ label {
+        color: #ffc107;
+      }
+      
+      .review-submit-btn {
+        background-color: #3b5d50;
+        color: white;
+        border: none;
+        padding: 0.5rem 2rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+      
+      .review-submit-btn:hover {
+        background-color: #2f4b40;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      .review-login-prompt {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        border: 1px dashed #dee2e6;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .empty-reviews {
+        text-align: center;
+        padding: 3rem 1rem;
+      }
+      
+      .empty-reviews i {
+        color: #dee2e6;
+        margin-bottom: 1rem;
+      }
+      
+      .empty-reviews p {
+        color: #777;
+        font-size: 1.1rem;
+        margin-bottom: 0;
+      }
+      
+      .share-buttons {
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      
+      .share-buttons h3 {
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      
+      .share-buttons ul {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+      
+      .share-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        color: #555;
+        transition: all 0.3s ease;
+      }
+      
+      .share-btn:hover {
+        background-color: #3b5d50;
+        color: white;
+        transform: translateY(-3px);
+      }
+      
+      /* Ajustements pour la version mobile */
+      @media (max-width: 768px) {
+        .product-details {
+          padding-left: 1rem;
+          padding-right: 1rem;
+          text-align: center;
+        }
+        
+        .title {
+          text-align: center;
+        }
+        
+        .price-display {
+          justify-content: center;
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+
+    <title>{{ produit.nom }} - Furni</title>
+  </head>
+
+  <body>
+    <!-- Start Header/Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+    
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+          <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'shop' %}">Boutique</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">À propos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'services' %}">Services</a>
+            </li>
+         
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+            </li>
+            
+          </ul>
+    
+          <ul class="custom-navbar-cta navbar-nav ms-5 mb-2 mb-md-0">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <!-- Affichage sous forme de nav-link pour rester au même niveau -->
+              <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+            </li>
+            {% endif %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% static 'images/user.svg' %}" alt="Utilisateur">
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="{% url 'utilisateur:profile' %}">Profil</a></li>
+                <li><a class="dropdown-item" href="{% url 'ecommerce:order_history' %}">Mes commandes</a></li>
+                <li><a class="dropdown-item" href="{% url 'blog:my_article' %}">Mes articles</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'utilisateur:logout' %}">Déconnexion</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'ecommerce:cart' %}">
+                <img src="{% static 'images/cart.svg' %}" alt="Panier">
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- End Header/Navigation -->
+
+    <!-- Start Hero Section -->
+    <div class="hero">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-5">
+            <div class="intro-excerpt">
+              <h1>{{ produit.nom }}</h1>
+              {% if produit.categorie %}
+                <p class="text-white">{{ produit.categorie.nom }}</p>
+              {% else %}
+                <p class="text-white">Aucune catégorie</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <!-- Optionnel : slider ou image secondaire -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Hero Section -->
+
+    <!-- Start Product Detail Section -->
+    <div class="untree_co-section product-detail-section">
+      <div class="container">
+        <div class="row">
+          <!-- Colonne image du produit -->
+          <div class="col-12 col-md-6 mb-5 mb-md-0">
+            <div class="product-detail-image">
+              {% if produit.image %}
+                <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="img-fluid rounded">
+              {% else %}
+                <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ produit.nom }}" class="img-fluid rounded">
+              {% endif %}
+              <!-- Galerie de miniatures -->
+              {% if produit.images.all %}
+                <div class="thumbnail-gallery">
+                  {% for img in produit.images.all %}
+                    <div class="thumbnail{% if forloop.first %} active{% endif %}" onclick="document.querySelector('.product-detail-image img').src='{{ img.image.url }}'">
+                      <img src="{{ img.image.url }}" alt="{{ img.legende }}" class="img-fluid">
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Colonne détails du produit -->
+          <div class="col-12 col-md-6">
+            <div class="product-details">
+              <h2 class="title">{{ produit.nom }}</h2>
+              <!-- Affichage des badges -->
+              <div class="mb-3">
+                {% if produit.est_nouveau %}
+                  <span class="product-badge badge-new">Nouveau</span>
+                {% endif %}
+                {% if produit.en_promotion %}
+                  <span class="product-badge badge-promo">Promo</span>
+                {% endif %}
+              </div>
+              <!-- Affichage du prix -->
+              <div class="price-display">
+                {% if produit.en_promotion and produit.prix_promo %}
+                  <span class="price-regular me-2">{{ produit.prix }} €</span>
+                  <span class="price-promo">{{ produit.prix_promo }} €</span>
+                {% else %}
+                  <span class="price-promo">{{ produit.prix }} €</span>
+                {% endif %}
+              </div>
+              <!-- Caractéristiques / Fiche technique -->
+              <div class="product-specs">
+                <ul class="list-unstyled">
+                  {% if produit.matiere %}
+                    <li class="spec-item"><i class="fa fa-circle-info spec-icon"></i> <strong>Matière :</strong> {{ produit.matiere }}</li>
+                  {% endif %}
+                  {% if produit.longueur and produit.largeur and produit.hauteur %}
+                    <li class="spec-item"><i class="fa fa-ruler spec-icon"></i> <strong>Dimensions :</strong> {{ produit.longueur }}×{{ produit.largeur }}×{{ produit.hauteur }} cm</li>
+                  {% endif %}
+                </ul>
+              </div>
+              <!-- Description -->
+              <div class="description">
+                <h3 class="h5 mb-3">Description</h3>
+                <p>{{ produit.description }}</p>
+                
+              </div>
+              <!-- Disponibilité -->
+              {% if produit.stock > 0 %}
+                <div class="availability in-stock mb-4">
+                  <i class="fa fa-check-circle me-2"></i> Disponible - {{ produit.stock }} en stock
+                </div>
+              {% else %}
+                <div class="availability out-of-stock mb-4">
+                  <i class="fa fa-times-circle me-2"></i> Rupture de stock
+                </div>
+              {% endif %}
+
+              <!-- Formulaire d'ajout au panier -->
+              {% if produit.stock > 0 %}
+                <form action="{% url 'ecommerce:add_to_cart' produit.pk %}" method="post" class="mb-5">
+                  {% csrf_token %}
+                  <div class="quantity-selector">
+                    <button type="button" class="quantity-btn" onclick="decrementQuantity()">−</button>
+                    <input type="text" class="quantity-input" value="1" id="quantite" name="quantite" aria-label="Quantité">
+                    <button type="button" class="quantity-btn" onclick="incrementQuantity(parseInt('{{ produit.stock }}'))">+</button>
+                  </div>
+                  <button type="submit" class="btn btn-primary add-to-cart-btn">
+                    <span class="fa fa-shopping-cart me-2"></span>Ajouter au panier
+                  </button>
+                </form>
+              {% else %}
+                <p class="text-danger">Ce produit n'est plus disponible.</p>
+              {% endif %}
+
+              <!-- Section d'avis et partage -->
+              <div class="product-meta mt-5">
+                <!-- Boutons de partage -->
+                <div class="share-buttons mb-4">
+                  <h3 class="h5 mb-3">Partager ce produit</h3>
+                  <ul class="list-unstyled d-flex">
+                    <li><a href="#" class="share-btn"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a href="#" class="share-btn"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="#" class="share-btn"><i class="fab fa-instagram"></i></a></li>
+                    <li><a href="#" class="share-btn"><i class="fab fa-pinterest"></i></a></li>
+                  </ul>
+                </div>
+
+                <!-- Section Avis Clients Améliorée -->
+                <div class="reviews-section">
+                  <div class="reviews-header">
+                    <h3 class="h5">Avis Clients</h3>
+                    <span class="reviews-count">{{ produit.avis.all|length }} avis</span>
+                  </div>
+                  
+                  {% if produit.avis.all %}
+                    {% for avis in produit.avis.all %}
+                      <div class="review-card">
+                        <div class="review-header">
+                          <div class="reviewer">{{ avis.utilisateur.username }}</div>
+                          <div class="review-date">{{ avis.date|date:"d/m/Y" }}</div>
+                        </div>
+                        <div class="star-rating">
+                          {% for i in "12345" %}
+                            {% if forloop.counter <= avis.note %}
+                              <i class="fas fa-star star"></i>
+                            {% else %}
+                              <i class="far fa-star star"></i>
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                        <div class="review-content">
+                          <p>{{ avis.commentaire }}</p>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <div class="empty-reviews">
+                      <i class="far fa-comment-alt fa-3x"></i>
+                      <p>Aucun avis n'a encore été publié pour ce produit.</p>
+                    </div>
+                  {% endif %}
+
+                  <!-- Formulaire pour poster un avis -->
+                  {% if user.is_authenticated %}
+                    <div class="review-form">
+                      <h4 class="h5">Partagez votre expérience</h4>
+                      <form method="post" action="{% url 'ecommerce:add_avis' produit.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                          <label for="note" class="form-label"><strong>Votre évaluation</strong></label>
+                          <div class="rating-selector">
+                            {% for n in "54321" %}
+                              <input type="radio" id="star{{ n }}" name="note" value="{{ n }}" {% if forloop.first %}checked{% endif %}/>
+                              <label for="star{{ n }}"><i class="fas fa-star"></i></label>
+                            {% endfor %}
+                          </div>
+                        </div>
+                        <div class="mb-4">
+                          <label for="commentaire" class="form-label"><strong>Votre avis</strong></label>
+                          <textarea id="commentaire" name="commentaire" class="form-control" rows="4" placeholder="Partagez votre expérience avec ce produit..."></textarea>
+                        </div>
+                        <div class="text-end">
+                          <button type="submit" class="btn review-submit-btn">Publier mon avis</button>
+                        </div>
+                      </form>
+                    </div>
+                  {% else %}
+                    <div class="review-login-prompt mt-4">
+                      <i class="fas fa-user-circle fa-3x mb-3 text-muted"></i>
+                      <p class="mb-4">Connectez-vous pour partager votre avis sur ce produit</p>
+                      <a href="{% url 'login' %}" class="btn btn-outline-primary">Se connecter</a>
+                    </div>
+                  {% endif %}
+                </div>
+                <!-- Fin section d'avis améliorée -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Product Detail Section -->
+    <footer class="footer-section">
+      <div class="container relative">
+        <!-- Image décorative (facultative) -->
+        <div class="sofa-img">
+          <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+        </div>
+        <!-- Section d'inscription à la newsletter -->
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form">
+              <h3 class="d-flex align-items-center">
+                <span class="me-1">
+                  <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                </span>
+                <span>Abonnez-vous à la Newsletter</span>
+              </h3>
+              <!-- Formulaire d'inscription à la newsletter -->
+              <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-auto">
+                  <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                </div>
+                <div class="col-auto">
+                  <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary" type="submit">
+                    <span class="fa fa-paper-plane"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Fin de la section newsletter, contenu complémentaire (liens, logo, etc.) -->
+        <div class="row g-5 mb-5">
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap">
+              <a href="#" class="footer-logo">Furni<span>.</span></a>
+            </div>
+            <p class="mb-4">Notre mission est de créer des espaces uniques et inspirants pour tous, alliant esthétisme et fonctionnalité.</p>
+            <ul class="list-unstyled custom-social">
+              <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+            </ul>
+          </div>
+          <div class="col-lg-8">
+            <div class="row links-wrap">
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="{% url 'about' %}">À propos</a></li>
+                  <li><a href="{% url 'services' %}">Services</a></li>
+               
+                  <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                 
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+              
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Section Copyright -->
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">
+                Copyright &copy;
+                <script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Conçu avec amour par 
+                <a href="https://untree.co">Untree.co</a> et Distribué par 
+                <a href="https://themewagon.com">ThemeWagon</a>
+              </p>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                <li><a href="#">Politique de confidentialité</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script>
+      // Fonction pour incrémenter la quantité
+      function incrementQuantity(maxStock) {
+        var input = document.getElementById('quantite');
+        var value = parseInt(input.value) || 1;
+        if(value < maxStock) {
+          input.value = value + 1;
+        }
+      }
+      // Fonction pour décrémenter la quantité
+      function decrementQuantity() {
+        var input = document.getElementById('quantite');
+        var value = parseInt(input.value) || 1;
+        if(value > 1) {
+          input.value = value - 1;
+        }
+      }
+    </script>
+  </body>
+</html>

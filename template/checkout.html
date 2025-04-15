@@ -1,0 +1,477 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+    
+    <meta name="description" content="Furni - Collection de meubles africains artisanaux" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+    
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <title>Furni - Paiement</title>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+    
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+          <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'shop' %}">Boutique</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">À propos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'services' %}">Services</a>
+            </li>
+         
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+            </li>
+            
+          </ul>
+    
+          <ul class="custom-navbar-cta navbar-nav ms-5 mb-2 mb-md-0">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <!-- Affichage sous forme de nav-link pour rester au même niveau -->
+              <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+            </li>
+            {% endif %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% static 'images/user.svg' %}" alt="Utilisateur">
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="{% url 'utilisateur:profile' %}">Profil</a></li>
+                <li><a class="dropdown-item" href="{% url 'ecommerce:order_history' %}">Mes commandes</a></li>
+                <li><a class="dropdown-item" href="{% url 'blog:my_article' %}">Mes articles</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'utilisateur:logout' %}">Déconnexion</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Fin Navigation -->
+
+    <!-- Section Héro -->
+    <div class="hero">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-5">
+            <div class="intro-excerpt">
+              <h1>Paiement</h1>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <!-- Optionnel : slider ou image secondaire -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Section Héro -->
+
+    <!-- Contenu du Paiement -->
+    <div class="untree_co-section">
+      <div class="container">
+        <form id="billing-form" method="post" action="{% url 'ecommerce:checkout' %}">
+          {% csrf_token %}
+          <div class="row">
+            <!-- Formulaire de facturation -->
+            <div class="col-md-6 mb-5 mb-md-0">
+              <h2 class="h3 mb-3 text-black">Détails de facturation</h2>
+              <div class="p-3 p-lg-5 border bg-white">
+                <!-- Champ Pays -->
+                <div class="form-group">
+                  <label for="c_country" class="text-black">Pays <span class="text-danger">*</span></label>
+                  <select id="c_country" class="form-control" name="pays">
+                    <option value="">Sélectionnez un pays</option>
+                    <option value="Bangladesh">Bangladesh</option>
+                    <option value="Algérie">Algérie</option>
+                    <option value="Afghanistan">Afghanistan</option>
+                    <option value="Ghana">Ghana</option>
+                    <option value="Albanie">Albanie</option>
+                    <option value="Bahreïn">Bahreïn</option>
+                    <option value="Colombie">Colombie</option>
+                    <option value="République dominicaine">République dominicaine</option>
+                  </select>
+                </div>
+                <!-- Champs Prénom et Nom -->
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label for="c_fname" class="text-black">Prénom <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_fname" name="prenom" placeholder="Votre prénom">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_lname" class="text-black">Nom <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_lname" name="nom" placeholder="Votre nom">
+                  </div>
+                </div>
+                <!-- Nom de la société -->
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="c_companyname" class="text-black">Nom de la société (facultatif)</label>
+                    <input type="text" class="form-control" id="c_companyname" name="c_companyname">
+                  </div>
+                </div>
+                <!-- Adresse -->
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="c_address" class="text-black">Adresse <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_address" name="adresse" placeholder="Adresse complète">
+                  </div>
+                </div>
+                <div class="form-group mt-3">
+                  <input type="text" class="form-control" placeholder="Appartement, suite, etc. (optionnel)">
+                </div>
+                <!-- État / Pays et Code postal -->
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label for="c_state_country" class="text-black">État / Pays <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_state_country" name="c_state_country">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_postal_zip" class="text-black">Code postal <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_postal_zip" name="code_postal">
+                  </div>
+                </div>
+                <!-- Email et Téléphone -->
+                <div class="form-group row mb-5">
+                  <div class="col-md-6">
+                    <label for="c_email_address" class="text-black">Adresse e-mail <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="c_email_address" name="email">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_phone" class="text-black">Téléphone <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_phone" name="telephone" placeholder="Votre numéro de téléphone">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Récapitulatif de la commande et Code Promo -->
+            <div class="col-md-6">
+              <div class="row mb-5">
+                <!-- Section Code Promo -->
+                <div class="col-md-12">
+                  <h2 class="h3 mb-3 text-black">Code Promo</h2>
+                  <div class="p-3 p-lg-5 border bg-white">
+                    <label for="c_code" class="text-black mb-3">Entrez votre code promo (si vous en avez un)</label>
+                    <div class="input-group w-75 couponcode-wrap">
+                      <input type="text" class="form-control me-2" id="c_code" placeholder="Code promo" aria-label="Code promo">
+                      <div class="input-group-append">
+                        <button class="btn btn-black btn-sm" type="button" id="apply-promo-btn">Appliquer</button>
+                      </div>
+                    </div>
+                    <div id="promo-message" class="mt-2 text-success"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ajout d'un champ caché pour le moyen de paiement -->
+              <input type="hidden" name="mode_paiement" id="mode_paiement" value="">
+
+              <!-- Section Paiement / Options de paiement -->
+              <div class="row mb-5">
+                <div class="col-md-12">
+                  <h2 class="h3 mb-3 text-black">Votre commande</h2>
+                  <div class="p-3 p-lg-5 border bg-white">
+                    <table class="table site-block-order-table mb-5">
+                      <thead>
+                        <tr>
+                          <th>Produit</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in cart_items %}
+                          <tr>
+                            <td>{{ item.produit.nom }} <strong class="mx-2">x</strong> {{ item.quantite }}</td>
+                            <td>{{ item.sous_total }} €</td>
+                          </tr>
+                        {% endfor %}
+                        <tr>
+                          <td class="text-black font-weight-bold"><strong>Sous-total du panier</strong></td>
+                          <td class="text-black" id="cart-subtotal">{{ total }} €</td>
+                        </tr>
+                        {% if promo_total %}
+                        <tr>
+                          <td class="text-black font-weight-bold"><strong>Total après réduction</strong></td>
+                          <td class="text-black font-weight-bold"><strong id="order-total">{{ promo_total }} €</strong></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                          <td class="text-black font-weight-bold"><strong>Total de la commande</strong></td>
+                          <td class="text-black font-weight-bold"><strong id="order-total">{{ total }} €</strong></td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+
+                    <!-- Options de paiement avec choix via collapsibles -->
+                    <div class="border p-3 mb-3">
+                      <h3 class="h6 mb-0 text-center"><strong>Choisissez votre moyen de paiement</strong></h3>
+                    </div>
+
+                    <!-- Option 1 : Orange Money -->
+                    <div class="border p-3 mb-3">
+                      <h3 class="h6 mb-0">
+                        <a class="d-block" data-bs-toggle="collapse" href="#collapseOrangeMoney" role="button" aria-controls="collapseOrangeMoney" onclick="selectPaymentMethod('orange_money')">
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-mobile-alt me-2"></i> Orange Money
+                          </div>
+                        </a>
+                      </h3>
+                      <div class="collapse" id="collapseOrangeMoney">
+                        <div class="py-2">
+                          <p class="mb-0">Payez rapidement avec votre compte Orange Money. Le paiement est sécurisé et instantané.</p>
+                          <div class="form-group mt-2">
+                            <input type="text" class="form-control" placeholder="Numéro de téléphone Orange Money">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Option 2 : Carte Bancaire -->
+                    <div class="border p-3 mb-3">
+                      <h3 class="h6 mb-0">
+                        <a class="d-block" data-bs-toggle="collapse" href="#collapseCreditCard" role="button" aria-controls="collapseCreditCard" onclick="selectPaymentMethod('mtn_mooney')">
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-credit-card me-2"></i> Carte bancaire
+                          </div>
+                        </a>
+                      </h3>
+                      <div class="collapse" id="collapseCreditCard">
+                        <div class="py-2">
+                          <p class="mb-0">Paiement sécurisé par carte bancaire (Visa, Mastercard, etc.).</p>
+                          <div class="form-group mt-2">
+                            <input type="text" class="form-control mb-2" placeholder="Numéro de carte">
+                            <div class="row">
+                              <div class="col-6">
+                                <input type="text" class="form-control" placeholder="MM/AA">
+                              </div>
+                              <div class="col-6">
+                                <input type="text" class="form-control" placeholder="CVC">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Option 3 : Wave -->
+                    <div class="border p-3 mb-5">
+                      <h3 class="h6 mb-0">
+                        <a class="d-block" data-bs-toggle="collapse" href="#collapseWave" role="button" aria-controls="collapseWave" onclick="selectPaymentMethod('moov_monney')">
+                          <div class="d-flex align-items-center">
+                            <i class="fas fa-wave-square me-2"></i> Wave
+                          </div>
+                        </a>
+                      </h3>
+                      <div class="collapse" id="collapseWave">
+                        <div class="py-2">
+                          <p class="mb-0">Effectuez votre paiement via l'application Wave. Rapide et sans frais.</p>
+                          <div class="form-group mt-2">
+                            <input type="text" class="form-control" placeholder="Numéro Wave">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Bouton de validation -->
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-black btn-lg py-3 btn-block">Valider la commande</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Fin Contenu du Paiement -->
+
+    <!-- Pied de page -->
+    <footer class="footer-section">
+      <div class="container relative">
+        <!-- Image décorative (facultative) -->
+        <div class="sofa-img">
+          <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+        </div>
+        <!-- Section d'inscription à la newsletter -->
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form">
+              <h3 class="d-flex align-items-center">
+                <span class="me-1">
+                  <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                </span>
+                <span>Abonnez-vous à la Newsletter</span>
+              </h3>
+              <!-- Formulaire d'inscription à la newsletter -->
+              <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-auto">
+                  <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                </div>
+                <div class="col-auto">
+                  <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary" type="submit">
+                    <span class="fa fa-paper-plane"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Fin de la section newsletter, contenu complémentaire (liens, logo, etc.) -->
+        <div class="row g-5 mb-5">
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap">
+              <a href="#" class="footer-logo">Furni<span>.</span></a>
+            </div>
+            <p class="mb-4">Notre mission est de créer des espaces uniques et inspirants pour tous, alliant esthétisme et fonctionnalité.</p>
+            <ul class="list-unstyled custom-social">
+              <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+              <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+            </ul>
+          </div>
+          <div class="col-lg-8">
+            <div class="row links-wrap">
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  <li><a href="{% url 'about' %}">À propos</a></li>
+                  <li><a href="{% url 'services' %}">Services</a></li>
+               
+                  <li><a href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                 
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+              
+                </ul>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3">
+                <ul class="list-unstyled">
+                  
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Section Copyright -->
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">
+                Copyright &copy;
+                <script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Conçu avec amour par 
+                <a href="https://untree.co">Untree.co</a> et Distribué par 
+                <a href="https://themewagon.com">ThemeWagon</a>
+              </p>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                <li><a href="#">Politique de confidentialité</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Fin Pied de page -->
+
+    <!-- Scripts -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script>
+      // Fonction pour récupérer le token CSRF depuis les cookies
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      const csrfToken = getCookie("csrftoken");
+      
+      // Fonction pour sélectionner et enregistrer le moyen de paiement
+      function selectPaymentMethod(method) {
+        document.getElementById("mode_paiement").value = method;
+      }
+      
+      // Gestion de l'application du code promo via AJAX dans la page de paiement
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("apply-promo-btn").addEventListener("click", function() {
+          const promoCode = document.getElementById("c_code").value.trim();
+          if (!promoCode) {
+            document.getElementById("promo-message").textContent = "Veuillez saisir un code promo.";
+            return;
+          }
+          fetch("{% url 'ecommerce:apply_promo_code' %}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-CSRFToken": csrfToken,
+            },
+            body: "promo_code=" + encodeURIComponent(promoCode)
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              document.getElementById("promo-message").textContent = data.error;
+            } else {
+              document.getElementById("promo-message").textContent = "Code promo appliqué : " + data.discount_percentage + "% de réduction.";
+              // Actualisation dynamique du total de la commande sans rechargement
+              document.getElementById("order-total").textContent = data.new_total + " €";
+            }
+          })
+          .catch(error => console.error("Erreur promo :", error));
+        });
+      });
+    </script>
+  </body>
+</html>

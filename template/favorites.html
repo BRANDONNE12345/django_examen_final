@@ -1,0 +1,221 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Mes Favoris - Furni Shop</title>
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+      :root {
+        --primary-color: #3b5d50;
+        --secondary-color: #f9bf29;
+      }
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #fafafa;
+        color: #2f2f2f;
+      }
+      .container {
+        margin-top: 3rem;
+      }
+      .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+      }
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      .product-item {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s;
+      }
+      .product-item:hover {
+        transform: translateY(-3px);
+      }
+      .product-item img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+      .product-title {
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        color: var(--primary-color);
+      }
+      .like-button {
+        background: none;
+        border: none;
+        color: var(--secondary-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header/Navigation (vous pouvez adapter en réutilisant votre code de header) -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+        <div class="container">
+          <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+      
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'shop' %}">Boutique</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}">À propos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'services' %}">Services</a>
+              </li>
+           
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+              </li>
+              
+            </ul>
+      
+            <ul class="custom-navbar-cta navbar-nav ms-5 mb-2 mb-md-0">
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <!-- Affichage sous forme de nav-link pour rester au même niveau -->
+                <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+              </li>
+              {% endif %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img src="{% static 'images/user.svg' %}" alt="Utilisateur">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="{% url 'utilisateur:profile' %}">Profil</a></li>
+                  <li><a class="dropdown-item" href="{% url 'ecommerce:order_history' %}">Mes commandes</a></li>
+                  <li><a class="dropdown-item" href="{% url 'blog:my_article' %}">Mes articles</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'utilisateur:logout' %}">Déconnexion</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'ecommerce:cart' %}">
+                  <img src="{% static 'images/cart.svg' %}" alt="Panier">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <!-- Fin Header -->
+
+    <div class="container">
+      <h1 class="page-title">Mes Favoris</h1>
+      {% if favorites %}
+        <div class="product-grid">
+          {% for fav in favorites %}
+            <div class="product-item">
+              <a href="{% url 'ecommerce:product_detail' fav.produit.pk %}">
+                {% if fav.produit.image %}
+                  <img src="{{ fav.produit.image.url }}" alt="{{ fav.produit.nom }}">
+                {% else %}
+                  <img src="{% static 'images/product-placeholder.jpg' %}" alt="{{ fav.produit.nom }}">
+                {% endif %}
+                <div class="product-title">{{ fav.produit.nom }}</div>
+              </a>
+              <!-- Vous pouvez ajouter ici un bouton pour retirer des favoris -->
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Vous n'avez pas encore ajouté de favoris.</p>
+      {% endif %}
+    </div>
+
+    <!-- Footer (vous pouvez réutiliser votre code de footer) -->
+    <footer class="footer-section">
+      <div class="container relative">
+        <div class="sofa-img">
+          <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+        </div>
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form">
+              <h3 class="d-flex align-items-center">
+                <span class="me-1">
+                  <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                </span>
+                <span>S'abonner à notre Newsletter</span>
+              </h3>
+              <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-auto">
+                  <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                </div>
+                <div class="col-auto">
+                  <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-primary">
+                    <span class="fa fa-paper-plane"></span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap">
+              <a href="{% url 'index' %}" class="footer-logo">Furni<span>.</span></a>
+            </div>
+            <p class="mb-4">Découvrez notre collection exclusive de meubles africains artisanaux, conçus avec passion et savoir‑faire.</p>
+            <ul class="list-unstyled custom-social">
+              <li><a href="#"><span class="fab fa-facebook-f"></span></a></li>
+              <li><a href="#"><span class="fab fa-twitter"></span></a></li>
+              <li><a href="#"><span class="fab fa-instagram"></span></a></li>
+              <li><a href="#"><span class="fab fa-linkedin"></span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">
+                Copyright &copy;
+                <script>document.write(new Date().getFullYear());</script>.
+                Tous droits réservés. – Furni
+              </p>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Fin Footer -->
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,648 @@
+
+{% load static %}
+<!doctype html>
+<!-- vscode: ignoreCSSValidation -->
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+    
+    <meta name="description" content="Furni - Collection de meubles africains artisanaux" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+    
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <title>Détail de la commande - Furni</title>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Barre de navigation Furni">
+        <div class="container">
+          <a class="navbar-brand" href="{% url 'index' %}">Furni<span>.</span></a>
+      
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Basculer la navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'shop' %}">Boutique</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}">À propos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'services' %}">Services</a>
+              </li>
+           
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+              </li>
+              
+            </ul>
+      
+            <ul class="custom-navbar-cta navbar-nav ms-5 mb-2 mb-md-0">
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <!-- Affichage sous forme de nav-link pour rester au même niveau -->
+                <span class="nav-link" style="color: #fff;">Bienvenue, {{ user.first_name|default:user.username }}!</span>
+              </li>
+              {% endif %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img src="{% static 'images/user.svg' %}" alt="Utilisateur">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                  <li><a class="dropdown-item" href="{% url 'utilisateur:profile' %}">Profil</a></li>
+                  <li><a class="dropdown-item" href="{% url 'ecommerce:order_history' %}">Mes commandes</a></li>
+                  <li><a class="dropdown-item" href="{% url 'blog:my_article' %}">Mes articles</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'utilisateur:logout' %}">Déconnexion</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'ecommerce:cart' %}">
+                  <img src="{% static 'images/cart.svg' %}" alt="Panier">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <!-- Fin Navigation -->
+
+    <!-- Section Héro -->
+    <div class="hero">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-5">
+            <div class="intro-excerpt">
+              <h1>Détail de la commande</h1>
+              <p>Référence #CMD{{ commande.id|stringformat:"06d" }}</p>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <!-- Optionnel : slider ou image secondaire -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Section Héro -->
+
+    <!-- Contenu du détail de la commande -->
+    <div class="untree_co-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-4">
+            <a href="{% url 'ecommerce:order_history' %}" class="btn btn-outline-primary">
+              <i class="fas fa-arrow-left me-2"></i> Retour à l'historique
+            </a>
+          </div>
+        </div>
+        
+        <div class="row">
+          <!-- Informations sur la commande -->
+          <div class="col-md-5 mb-5 mb-md-0">
+            <div class="p-3 p-lg-5 border bg-white">
+              <h2 class="h3 mb-4 text-black">Informations sur la commande</h2>
+              
+              <div class="mb-4">
+                <div class="form-group row mb-3">
+                  <div class="col-md-5">
+                    <label class="text-black fw-bold">Référence :</label>
+                  </div>
+                  <div class="col-md-7">
+                    <span>#CMD{{ commande.id|stringformat:"06d" }}</span>
+                  </div>
+                </div>
+                
+                <div class="form-group row mb-3">
+                  <div class="col-md-5">
+                    <label class="text-black fw-bold">Date :</label>
+                  </div>
+                  <div class="col-md-7">
+                    <span>{{ commande.date|date:"d/m/Y à H:i" }}</span>
+                  </div>
+                </div>
+                
+                <div class="form-group row mb-3">
+                  <div class="col-md-5">
+                    <label class="text-black fw-bold">Statut :</label>
+                  </div>
+                  <div class="col-md-7">
+                    {% if commande.etat == 'annulée' %}
+                      <span class="badge bg-danger">{{ commande.get_etat_display }}</span>
+                    {% elif commande.etat == 'en_attente' %}
+                      <span class="badge bg-warning text-dark">{{ commande.get_etat_display }}</span>
+                    {% elif commande.etat == 'en_cours' %}
+                      <span class="badge bg-info text-dark">{{ commande.get_etat_display }}</span>
+                    {% elif commande.etat == 'livrée' %}
+                      <span class="badge bg-success">{{ commande.get_etat_display }}</span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ commande.get_etat_display }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <div class="form-group row mb-3">
+                  <div class="col-md-5">
+                    <label class="text-black fw-bold">Paiement :</label>
+                  </div>
+                  <div class="col-md-7">
+                    <span>{{ commande.mode_paiement|default:"Non spécifié" }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {% if commande.etat == 'en_attente' or commande.etat == 'en_cours' %}
+              <div class="form-group mt-4">
+                <a href="{% url 'ecommerce:request_cancellation' commande.id %}" class="btn btn-danger py-2 px-4">
+                  <i class="fas fa-times-circle me-2"></i> Demander une annulation
+                </a>
+              </div>
+              {% endif %}
+              
+              {% if commande.etat == 'livrée' %}
+              <div class="form-group mt-4">
+                <a href="#" class="btn btn-primary py-2 px-4" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                  <i class="fas fa-star me-2"></i> Évaluer mon achat
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          
+<!-- Partie Adresse -->
+<div class="col-md-7">
+    <div class="p-3 p-lg-5 border bg-white mb-4">
+      <h2 class="h3 mb-4 text-black">Adresse de livraison</h2>
+      {% if commande.adresse %}
+      <address>
+        <strong>{{ commande.nom }} {{ commande.prenom }}</strong><br>
+        {{ commande.adresse }}<br>
+        {{ commande.code_postal }} {{ commande.ville }}<br>
+        {{ commande.pays }}<br>
+        <abbr title="Téléphone">Tél :</abbr> {{ commande.telephone }}<br>
+        <abbr title="Email">Email :</abbr> {{ commande.email }}
+      </address>
+      {% else %}
+      <p>Informations d'adresse non disponibles</p>
+      {% endif %}
+    </div>
+  </div>
+  
+            
+            <!-- Récapitulatif des articles -->
+            <div class="p-3 p-lg-5 border bg-white">
+              <h2 class="h3 mb-4 text-black">Articles commandés</h2>
+              <table class="table custom-table">
+                <thead>
+                  <tr>
+                    <th>Produit</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Sous-total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for detail in commande.details.all %}
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        {% if detail.produit.image %}
+                        <img src="{{ detail.produit.image.url }}" alt="{{ detail.produit.nom }}" class="img-thumbnail me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light me-3" style="width: 60px; height: 60px;"></div>
+                        {% endif %}
+                        <div>
+                          <h6 class="mb-0">{{ detail.produit.nom }}</h6>
+                          {% if detail.produit.reference %}
+                          <small class="text-muted">Réf: {{ detail.produit.reference }}</small>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ detail.prix_unitaire }} €</td>
+                    <td>{{ detail.quantite }}</td>
+                    <td>{{ detail.sous_total }} €</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  {% if commande.reduction > 0 %}
+                  <tr>
+                    <td colspan="3" class="text-end"><strong>Sous-total</strong></td>
+                    <td>{{ commande.sous_total }} €</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" class="text-end"><strong>Réduction</strong></td>
+                    <td>-{{ commande.reduction }} €</td>
+                  </tr>
+                  {% endif %}
+                  <tr>
+                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                    <td><strong>{{ commande.montant_total }} €</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+              
+<!-- Statut de suivi de commande -->
+{% if commande.etat != 'annulée' %}
+<div class="mt-5">
+  <h4 class="mb-4">Suivi de la commande</h4>
+  <div class="order-tracking-progress">
+    <div class="progress" style="height: 6px;">
+      <div class="progress-bar bg-success" role="progressbar" style="width: {{ commande.progress_percentage }}%;" aria-valuenow="{{ commande.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div class="d-flex justify-content-between mt-2">
+      <div class="order-track-step {% if commande.progress_percentage >= 25 %}active{% endif %}">
+        <div class="order-track-status">
+          <span class="order-track-status-dot"></span>
+          <span class="order-track-status-line"></span>
+        </div>
+        <div class="order-track-text">
+          <p class="order-track-text-stat">Commande reçue</p>
+          <span class="order-track-text-sub">{{ commande.date|date:"d/m/Y" }}</span>
+        </div>
+      </div>
+      <div class="order-track-step {% if commande.progress_percentage >= 50 %}active{% endif %}">
+        <div class="order-track-status">
+          <span class="order-track-status-dot"></span>
+          <span class="order-track-status-line"></span>
+        </div>
+        <div class="order-track-text">
+          <p class="order-track-text-stat">En préparation</p>
+        </div>
+      </div>
+      <div class="order-track-step {% if commande.progress_percentage >= 75 %}active{% endif %}">
+        <div class="order-track-status">
+          <span class="order-track-status-dot"></span>
+          <span class="order-track-status-line"></span>
+        </div>
+        <div class="order-track-text">
+          <p class="order-track-text-stat">Expédiée</p>
+        </div>
+      </div>
+      <div class="order-track-step {% if commande.progress_percentage == 100 %}active{% endif %}">
+        <div class="order-track-status">
+          <span class="order-track-status-dot"></span>
+        </div>
+        <div class="order-track-text">
+          <p class="order-track-text-stat">Terminée</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Contenu du détail de la commande -->
+
+    <!-- Modal pour l'évaluation -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="reviewModalLabel">Évaluer votre achat</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <form action="#" method="post" id="reviewForm">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="rating" class="form-label">Note</label>
+                <div class="rating-stars">
+                  <i class="far fa-star fa-lg" data-rating="1"></i>
+                  <i class="far fa-star fa-lg" data-rating="2"></i>
+                  <i class="far fa-star fa-lg" data-rating="3"></i>
+                  <i class="far fa-star fa-lg" data-rating="4"></i>
+                  <i class="far fa-star fa-lg" data-rating="5"></i>
+                </div>
+                <input type="hidden" name="rating" id="rating" value="">
+              </div>
+              <div class="mb-3">
+                <label for="reviewTitle" class="form-label">Titre</label>
+                <input type="text" class="form-control" id="reviewTitle" name="title" placeholder="Un titre court pour votre avis">
+              </div>
+              <div class="mb-3">
+                <label for="reviewText" class="form-label">Votre avis</label>
+                <textarea class="form-control" id="reviewText" name="comment" rows="4" placeholder="Partagez votre expérience avec ce produit..."></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="button" class="btn btn-primary" id="submitReview">Soumettre</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pied de page -->
+    <footer class="footer-section">
+      <div class="container relative">
+        <div class="sofa-img">
+          <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+        </div>
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="subscription-form">
+              <h3 class="d-flex align-items-center">
+                <span class="me-1"><img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid"></span>
+                <span>S'abonner à notre Newsletter</span>
+              </h3>
+              <form action="#" class="row g-3">
+                <div class="col-auto"><input type="text" class="form-control" placeholder="Entrez votre nom"></div>
+                <div class="col-auto"><input type="email" class="form-control" placeholder="Entrez votre email"></div>
+                <div class="col-auto"><button class="btn btn-primary"><span class="fa fa-paper-plane"></span></button></div>
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap"><a href="{% url 'index' %}" class="footer-logo">Furni<span>.</span></a></div>
+            <p class="mb-4">Découvrez notre collection exclusive de meubles africains artisanaux, conçus avec passion et savoir‑faire.</p>
+            <ul class="list-unstyled custom-social">
+              <li><a href="#"><span class="fab fa-facebook-f"></span></a></li>
+              <li><a href="#"><span class="fab fa-twitter"></span></a></li>
+              <li><a href="#"><span class="fab fa-instagram"></span></a></li>
+              <li><a href="#"><span class="fab fa-linkedin"></span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-top copyright">
+          <div class="row pt-4">
+            <div class="col-lg-6">
+              <p class="mb-2 text-center text-lg-start">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Furni</p>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end">
+              <ul class="list-unstyled d-inline-flex ms-auto">
+                <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                <li><a href="#">Politique de confidentialité</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Fin Pied de page -->
+
+    <!-- Scripts -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script>
+      // Script pour les étoiles d'évaluation
+      document.addEventListener("DOMContentLoaded", function() {
+        const ratingStars = document.querySelectorAll('.rating-stars i');
+        const ratingInput = document.getElementById('rating');
+        
+        ratingStars.forEach(star => {
+          star.addEventListener('mouseover', function() {
+            const rating = this.getAttribute('data-rating');
+            
+            // Réinitialiser toutes les étoiles
+            ratingStars.forEach(s => s.className = 'far fa-star fa-lg');
+            
+            // Remplir les étoiles jusqu'au survol
+            for (let i = 0; i < rating; i++) {
+              ratingStars[i].className = 'fas fa-star fa-lg text-warning';
+            }
+          });
+          
+          star.addEventListener('mouseout', function() {
+            const currentRating = ratingInput.value || 0;
+            
+            // Réinitialiser toutes les étoiles
+            ratingStars.forEach(s => s.className = 'far fa-star fa-lg');
+            
+            // Remplir les étoiles selon la note actuelle
+            for (let i = 0; i < currentRating; i++) {
+              ratingStars[i].className = 'fas fa-star fa-lg text-warning';
+            }
+          });
+          
+          star.addEventListener('click', function() {
+            const rating = this.getAttribute('data-rating');
+            ratingInput.value = rating;
+            
+            // Mise à jour visuelle
+            ratingStars.forEach((s, index) => {
+              s.className = index < rating ? 'fas fa-star fa-lg text-warning' : 'far fa-star fa-lg';
+            });
+          });
+        });
+        
+        // Soumission du formulaire d'évaluation
+        document.getElementById('submitReview').addEventListener('click', function() {
+          document.getElementById('reviewForm').submit();
+        });
+      });
+    </script>
+    <style>
+      /* Styles pour la page de détail de commande */
+      .btn-primary {
+        background-color: #3b5d50;
+        border-color: #3b5d50;
+      }
+      
+      .btn-primary:hover {
+        background-color: #2f4b40;
+        border-color: #2f4b40;
+      }
+      
+      .btn-outline-primary {
+        color: #3b5d50;
+        border-color: #3b5d50;
+      }
+      
+      .btn-outline-primary:hover {
+        background-color: #3b5d50;
+        color: #ffffff;
+      }
+      
+      /* Style pour le tableau de produits */
+      .custom-table th {
+        font-weight: 600;
+        background-color: #f8f9fa;
+      }
+      
+      /* Styles pour le suivi de commande */
+      .order-tracking-progress {
+        margin-top: 30px;
+      }
+      
+      .order-track-step {
+        position: relative;
+        text-align: center;
+        flex: 1;
+      }
+      
+      .order-track-status {
+        position: relative;
+        height: 15px;
+      }
+      
+      .order-track-status-dot {
+        display: block;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: #d6d6d6;
+        margin: 0 auto;
+      }
+      
+      .order-track-step.active .order-track-status-dot {
+        background-color: #3b5d50;
+      }
+      
+      .order-track-text {
+        margin-top: 10px;
+      }
+      
+      .order-track-text-stat {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0;
+      }
+      
+      .order-track-text-sub {
+        font-size: 0.8rem;
+        color: #666;
+      }
+      
+      /* Style pour les étoiles d'évaluation */
+      .rating-stars {
+        cursor: pointer;
+        color: #ddd;
+      }
+      
+      .rating-stars i {
+        margin-right: 5px;
+      }
+      
+      .text-warning {
+        color: #ffc107 !important;
+      }
+    </style>
+  </body>
+</html>
+    <!-- Fin Contenu Principal -->
+
+    <!-- Pied de page -->
+    <footer class="footer-section">
+        <div class="container relative">
+          <!-- Image décorative (facultative) -->
+          <div class="sofa-img">
+            <img src="{% static 'images/sofa.png' %}" alt="Canapé" class="img-fluid">
+          </div>
+          <!-- Section d'inscription à la newsletter -->
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="subscription-form">
+                <h3 class="d-flex align-items-center">
+                  <span class="me-1">
+                    <img src="{% static 'images/envelope-outline.svg' %}" alt="Enveloppe" class="img-fluid">
+                  </span>
+                  <span>Abonnez-vous à la Newsletter</span>
+                </h3>
+                <!-- Formulaire d'inscription à la newsletter -->
+                <form action="{% url 'utilisateur:newsletter_subscription' %}" method="post" class="row g-3">
+                  {% csrf_token %}
+                  <div class="col-auto">
+                    <input type="text" class="form-control" placeholder="Entrez votre nom" name="name" required>
+                  </div>
+                  <div class="col-auto">
+                    <input type="email" class="form-control" placeholder="Entrez votre email" name="email" required>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">
+                      <span class="fa fa-paper-plane"></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- Fin de la section newsletter, contenu complémentaire (liens, logo, etc.) -->
+          <div class="row g-5 mb-5">
+            <div class="col-lg-4">
+              <div class="mb-4 footer-logo-wrap">
+                <a href="#" class="footer-logo">Furni<span>.</span></a>
+              </div>
+              <p class="mb-4">Notre mission est de créer des espaces uniques et inspirants pour tous, alliant esthétisme et fonctionnalité.</p>
+              <ul class="list-unstyled custom-social">
+                <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+                <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-8">
+              <div class="row links-wrap">
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                    <li><a href="{% url 'about' %}">À propos</a></li>
+                    <li><a href="{% url 'services' %}">Services</a></li>
+                 
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                   
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                
+                  </ul>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Section Copyright -->
+          <div class="border-top copyright">
+            <div class="row pt-4">
+              <div class="col-lg-6">
+                <p class="mb-2 text-center text-lg-start">
+                  Copyright &copy;
+                  <script>document.write(new Date().getFullYear());</script>. Tous droits réservés. – Conçu avec amour par 
+                  <a href="https://untree.co">Untree.co</a> et Distribué par 
+                  <a href="https://themewagon.com">ThemeWagon</a>
+                </p>
+              </div>
+              <div class="col-lg-6 text-center text-lg-end">
+                <ul class="list-unstyled d-inline-flex ms-auto">
+                  <li class="me-4"><a href="#">Conditions d'utilisation</a></li>
+                  <li><a href="#">Politique de confidentialité</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    <!-- Fin Pied de page -->
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>
